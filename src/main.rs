@@ -54,13 +54,24 @@ impl Expr {
     }
 }
 
+struct Machine {
+    expr: Box<Expr>,
+}
+
+impl Machine {
+    fn run(self) {
+        let mut e = self.expr;
+        while e.reducible() {
+            e = Box::new(e.reduce());
+            println!("{:?}", e);
+        }
+    }
+}
+
 fn main() {
-    let mut m = Expr::Add(
+    let e = Box::new(Expr::Add(
                     Box::new(Expr::Multiply(Box::new(Expr::Number(1)), Box::new(Expr::Number(2)))),
                     Box::new(Expr::Multiply(Box::new(Expr::Number(3)), Box::new(Expr::Number(4)))),
-                    );
-    while m.reducible() {
-        m = m.reduce();
-        println!("{:?}", m);
-    }
+                    ));
+    Machine {expr: e}.run();
 }
